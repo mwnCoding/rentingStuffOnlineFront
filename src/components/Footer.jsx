@@ -1,9 +1,11 @@
-import { Flex, Text } from '@mantine/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { Flex, Text } from "@mantine/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 function Footer() {
-  const linkedInIcon = <FontAwesomeIcon icon={faLinkedin} style={{ fontSize: '30px' }} />;
+  const linkedInIcon = (
+    <FontAwesomeIcon icon={faLinkedin} style={{ fontSize: "30px" }} />
+  );
 
   return (
     <footer
@@ -19,22 +21,34 @@ function Footer() {
         <Flex gap="sm" align="center">
           <Text size="sm">Created By</Text>
         </Flex>
-        <Flex direction={{  sm: 'row' }} gap="md" align="start" justify="center">
+        <Flex direction={{ sm: "row" }} gap="md" align="start" justify="center">
           <Text>
-              <a href="LINK_TO_CREATOR_1_LINKEDIN" target="_blank" rel="noopener noreferrer">
-                Thomas Demoncy
-              </a>
-            </Text>
-            <Text size="md" align="center">
-              <a href="LINK_TO_CREATOR_2_LINKEDIN" target="_blank" rel="noopener noreferrer">
-                Maximiliano Wullbrand-Naddeo
-              </a>
-            </Text>
-            <Text size="md" align="center">
-              <a href="LINK_TO_CREATOR_3_LINKEDIN" target="_blank" rel="noopener noreferrer">
-                Halil Ibrahim Aydin
-              </a>
-            </Text>
+            <a
+              href={import.meta.env.VITE_CREATOR_1_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Thomas Demoncy
+            </a>
+          </Text>
+          <Text size="md" align="center">
+            <a
+              href={import.meta.env.VITE_CREATOR_2_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Maximiliano Wullbrand-Naddeo
+            </a>
+          </Text>
+          <Text size="md" align="center">
+            <a
+              href={import.meta.env.VITE_CREATOR_3_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Halil Ibrahim Aydin
+            </a>
+          </Text>
         </Flex>
         <Flex direction="column" align="center">
           <Text size="sm">Created for Ironhack final project.</Text>
