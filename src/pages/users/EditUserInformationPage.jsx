@@ -63,11 +63,12 @@ const EditUserInformationPage = () => {
   };
 
   const handleUpdateImage = async (e) => {
-    const fileURL = await uploadImage(e)
-      .catch((error) => {
-        console.error(error);
-      })
-      .then(() => setFile(fileURL));
+    try {
+      const fileURL = await uploadImage(e);
+      setFile(fileURL);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
