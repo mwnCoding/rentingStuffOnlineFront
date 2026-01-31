@@ -12,6 +12,7 @@ import {
   Loader,
 } from "@mantine/core";
 import { AuthContext } from "../../contexts/AuthContext";
+import uploadImage from "../../services/cloudinaryUpload";
 
 const EditUserInformationPage = () => {
   const { id } = useParams();
@@ -50,7 +51,7 @@ const EditUserInformationPage = () => {
     axios
       .put(
         `${import.meta.env.VITE_API_URL}/api/user/upload/${userId}`,
-        formData
+        formData,
       )
       .then((response) => {
         console.log("User data updated successfully");
@@ -61,9 +62,12 @@ const EditUserInformationPage = () => {
       });
   };
 
-  const handleUpdateImage = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+  const handleUpdateImage = async (e) => {
+    const fileURL = await uploadImage(e)
+      .catch((error) => {
+        console.error(error);
+      })
+      .then(() => setFile(fileURL));
   };
 
   return (
@@ -93,7 +97,7 @@ const EditUserInformationPage = () => {
                   label="Profile image"
                   placeholder="Click to upload"
                   value={file}
-                  onChange={setFile}
+                  onChange={handleUpdateImage}
                 />
               </Card.Section>
             </Card>

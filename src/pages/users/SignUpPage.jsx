@@ -47,16 +47,16 @@ function SignupPage() {
     validate: {
       firstName: hasLength(
         { min: 2 },
-        "First Name must be at least 2 characters long"
+        "First Name must be at least 2 characters long",
       ),
       lastName: hasLength(
         { min: 2 },
-        "Last name must be at least 2 characters long"
+        "Last name must be at least 2 characters long",
       ),
       email: isEmail("Invalid email"),
       password: hasLength(
         { min: 4 },
-        "Password needs to be at least 4 characters long"
+        "Password needs to be at least 4 characters long",
       ),
       confirmPassword: (value, values) =>
         value !== values.password ? "Passwords do not match" : null,
@@ -94,29 +94,22 @@ function SignupPage() {
     }
   };
 
-  function uploadImage() {
-    const formData = new FormData();
-    formData.append("imageUrl", file);
+  async function uploadImage(file) {
     setImageLoading(true);
-    axios
-      .put(`${import.meta.env.VITE_API_URL}/auth/upload`, formData)
-      .then((response) => {
-        newForm.setFieldValue("imgUrl", response.data.file);
-        setFileUploaded(true);
-        setImageLoading(false);
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-        setImageLoading(false);
-      });
-
-    console.log("Uploading image");
+    const imageUrl = await uploadImage(file).catch((error) => {
+      console.error(error);
+      setImageLoading(false);
+    });
+    newForm.setFieldValue("imgUrl", imageUrl);
+    setFile(imageUrl);
+    setFileUploaded(true);
+    setImageLoading(false);
   }
 
   function removeImage() {
     newForm.setFieldValue("imgUrl", defaultPorfileUrl);
     setFile(null);
-    setFileUploaded(true);
+    setFileUploaded(false);
   }
 
   return (
@@ -141,14 +134,13 @@ function SignupPage() {
             label="Profile picture"
             placeholder="click to upload"
             value={file}
-            onChange={setFile}
+            onChange={uploadImage}
           />
-          <Flex justify="space-evenly">
-            <Button mr="1em" onClick={uploadImage}>
-              Upload
-            </Button>
-            <Button onClick={removeImage}>Remove</Button>
-          </Flex>
+          {fileUploaded && (
+            <Flex justify="space-evenly">
+              <Button onClick={removeImage}>Remove</Button>
+            </Flex>
+          )}
         </Flex>
 
         <Container w="100%">
