@@ -2,7 +2,7 @@ import "@mantine/core/styles.css";
 import "dayjs/locale/de";
 import Navbar from "./components/Navbar";
 import { AppShell, Container, rem } from "@mantine/core";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import SignupPage from "./pages/users/SignUpPage";
 import LoginPage from "./pages/users/LogInPage";
@@ -20,24 +20,23 @@ import CreateRequest from "./pages/requests/CreateRequestPage";
 import EditRequest from "./pages/requests/EditRequestPage";
 import UserRequests from "./pages/users/UserRequestsPage";
 import Footer from "./components/Footer";
+import { useContext } from "react";
+import { AuthContext } from "./contexts/AuthContext";
 
 function App() {
-  const containerProps = {
-  };
+  const { isLoggedIn } = useContext(AuthContext);
+
   return (
     <>
-      <AppShell
-      padding="md">
+      <AppShell padding="md">
         <AppShell.Header>
           <Navbar />
         </AppShell.Header>
-        <AppShell.Main 
-        pt={`calc(${rem(70)} + var(--mantine-spacing-md))`}
-        pb={`calc(${rem(70)} + var(--mantine-spacing-md))`}
+        <AppShell.Main
+          pt={`calc(${rem(70)} + var(--mantine-spacing-md))`}
+          pb={`calc(${rem(70)} + var(--mantine-spacing-md))`}
         >
-        <Container
-          pb={`calc(${rem(100)} + var(--mantine-spacing-md))`}
-        >
+          <Container pb={`calc(${rem(100)} + var(--mantine-spacing-md))`}>
             <Routes>
               <Route path="/" element={<Homepage />} />
               <Route
@@ -134,16 +133,19 @@ function App() {
                 }
               />
 
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+              <Route
+                path="/login"
+                element={isLoggedIn ? <Navigate to="/" /> : <LoginPage />}
+              />
+              <Route
+                path="/signup"
+                element={isLoggedIn ? <Navigate to="/" /> : <SignupPage />}
+              />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Container>
         </AppShell.Main>
-        <AppShell.Footer
-          padding="md"
-          visibleFrom="md"
-        >
+        <AppShell.Footer padding="md" visibleFrom="md">
           <Footer />
         </AppShell.Footer>
       </AppShell>

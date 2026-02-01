@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import {
   Grid,
   Image,
@@ -10,6 +11,8 @@ import {
   Card,
   Flex,
   Loader,
+  Box,
+  Center,
 } from "@mantine/core";
 import { AuthContext } from "../../contexts/AuthContext";
 import uploadImage from "../../services/cloudinaryUpload";
@@ -21,6 +24,7 @@ const EditUserInformationPage = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,24 +38,23 @@ const EditUserInformationPage = () => {
   }, [userId]);
 
   const handleInputChange = (e) => {
+    console.log(e.target);
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value,
-    });
+    updateUserData(name, value);
+  };
+
+  const updateUserData = (key, value) => {
+    setUserData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   const handleSaveChanges = () => {
-    const formData = new FormData();
-    formData.append("imageUrl", file);
-    formData.append("firstName", userData.firstName);
-    formData.append("lastName", userData.lastName);
-    formData.append("email", userData.email);
-
     axios
       .put(
         `${import.meta.env.VITE_API_URL}/api/user/upload/${userId}`,
-        formData,
+        userData,
       )
       .then((response) => {
         console.log("User data updated successfully");
@@ -62,12 +65,23 @@ const EditUserInformationPage = () => {
       });
   };
 
-  const handleUpdateImage = async (e) => {
+  const onChangeFile = (selectedFile) => {
+    console.log(selectedFile);
+    setFile(selectedFile);
+    handleUpdateImage(selectedFile);
+  };
+
+  const handleUpdateImage = async (selectedFile) => {
+    if (!selectedFile) return;
+    setImageLoading(true);
     try {
-      const fileURL = await uploadImage(e);
-      setFile(fileURL);
+      const fileURL = await uploadImage(selectedFile);
+      updateUserData("imageUrl", fileURL);
+      setImageLoading(false);
+      console.debug(selectedFile);
     } catch (error) {
       console.error(error);
+      setImageLoading(false);
     }
   };
 
@@ -82,23 +96,27 @@ const EditUserInformationPage = () => {
           <Grid.Col span={{ base: 12, xs: 12, md: 4, lg: 4 }} justify="center">
             <Card bg="#F2F2F2" top="1.5em">
               <Card.Section>
-                {userData && (
-                  <Flex justify="center">
-                    <Image
-                      src={userData.imageUrl}
-                      w={150}
-                      h={150}
-                      fit="contain"
-                      radius="xl"
-                      alt={`${userData.firstName} ${userData.lastName}`}
-                    />
-                  </Flex>
-                )}
+                <Center>
+                  {userData && (
+                    <Box w="150" h="150">
+                      {imageLoading ? (
+                        <Loader color="blue" size="10em" />
+                      ) : (
+                        <Image
+                          src={userData.imageUrl}
+                          radius="50%"
+                          width={150}
+                          height={150}
+                        />
+                      )}
+                    </Box>
+                  )}
+                </Center>
                 <FileInput
                   label="Profile image"
                   placeholder="Click to upload"
                   value={file}
-                  onChange={handleUpdateImage}
+                  onChange={onChangeFile}
                 />
               </Card.Section>
             </Card>
@@ -125,7 +143,12 @@ const EditUserInformationPage = () => {
               value={userData?.email || ""}
               onChange={handleInputChange}
             />
-            <Button mt="1em" variant="filled" onClick={handleSaveChanges}>
+            <Button
+              mt="1em"
+              variant="filled"
+              onClick={handleSaveChanges}
+              disabled={imageLoading}
+            >
               Save Changes
             </Button>
           </Grid.Col>

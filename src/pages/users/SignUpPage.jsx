@@ -18,22 +18,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { IconX } from "@tabler/icons-react";
+import uploadImage from "../../services/cloudinaryUpload";
 
 function SignupPage() {
   const defaultPorfileUrl =
     "https://res.cloudinary.com/dq06ojue1/image/upload/v1698767929/d9r3dmbpbov77j75rqz0.png";
 
   const [file, setFile] = useState(null);
-  const [fileUploaded, setFileUploaded] = useState(true);
+  const [fileUploaded, setFileUploaded] = useState(false);
   const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
 
   const [imageLoading, setImageLoading] = useState(false);
 
   const [emailTaken, setEmailTaken] = useState(false);
-
-  useEffect(() => {
-    setFileUploaded(false);
-  }, [file]);
 
   const newForm = useForm({
     initialValues: {
@@ -94,17 +91,26 @@ function SignupPage() {
     }
   };
 
-  async function uploadImage(file) {
+  async function handleUploadImage(selectedFile) {
+    if (!selectedFile) return;
+    console.log(selectedFile);
     setImageLoading(true);
-    const imageUrl = await uploadImage(file).catch((error) => {
+    try {
+      const fileURL = await uploadImage(selectedFile);
+      newForm.setFieldValue("imgUrl", fileURL);
+      setFileUploaded(true);
+      setImageLoading(false);
+    } catch (error) {
       console.error(error);
       setImageLoading(false);
-    });
-    newForm.setFieldValue("imgUrl", imageUrl);
-    setFile(imageUrl);
-    setFileUploaded(true);
-    setImageLoading(false);
+    }
   }
+
+  const onChangeFile = (selectedFile) => {
+    console.log(selectedFile);
+    setFile(selectedFile);
+    handleUploadImage(selectedFile);
+  };
 
   function removeImage() {
     newForm.setFieldValue("imgUrl", defaultPorfileUrl);
@@ -134,7 +140,7 @@ function SignupPage() {
             label="Profile picture"
             placeholder="click to upload"
             value={file}
-            onChange={uploadImage}
+            onChange={onChangeFile}
           />
           {fileUploaded && (
             <Flex justify="space-evenly">
@@ -181,17 +187,6 @@ function SignupPage() {
                 mt="1em"
                 {...newForm.getInputProps("confirmPassword")}
               />
-              {file && !fileUploaded && (
-                <Notification
-                  icon={xIcon}
-                  color="red"
-                  title="Stop!"
-                  mt="1em"
-                  withCloseButton={false}
-                >
-                  Please upload picture before submitting
-                </Notification>
-              )}
               {emailTaken && (
                 <Notification
                   icon={xIcon}
@@ -203,7 +198,12 @@ function SignupPage() {
                   Seems like this email is already in use
                 </Notification>
               )}
-              <Button mt="1em" type="submit" variant="filled">
+              <Button
+                mt="1em"
+                type="submit"
+                variant="filled"
+                disabled={imageLoading}
+              >
                 Sign Up
               </Button>
             </form>

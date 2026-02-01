@@ -9,6 +9,8 @@ import {
   Grid,
   Button,
   Loader,
+  Center,
+  Box,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -44,17 +46,17 @@ function UserInformationPage() {
               direction="column"
               wrap="wrap"
             >
-              <Container id="form-container">
+              <Box h={150} w={150}>
                 <Image
                   src={userData?.imageUrl || "../src/assets/defaultAvatar.png"}
                   width={150}
                   height={150}
-                  radius="md"
+                  radius="50%"
                   alt={`${userData?.firstName || ""} ${
                     userData?.lastName || ""
                   }`}
                 />
-              </Container>
+              </Box>
               <Container id="form-container">
                 <Text size="xl">{`${userData?.firstName || ""} ${
                   userData?.lastName || ""
@@ -62,11 +64,13 @@ function UserInformationPage() {
                 <Text size="sm" color="gray" style={{ marginBottom: "10px" }}>
                   {userData?.email || ""}
                 </Text>
-                <Link to="/edit-profile">
-                  <Button variant="filled" style={{ marginTop: "10px" }}>
-                    Edit Profile
-                  </Button>
-                </Link>
+                <Center>
+                  <Link to="/edit-profile">
+                    <Button variant="filled" style={{ marginTop: "10px" }}>
+                      Edit Profile
+                    </Button>
+                  </Link>
+                </Center>
               </Container>
             </Flex>
           </Paper>
