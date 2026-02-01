@@ -1,7 +1,7 @@
 
 
 # Renting Stuff Online
-[Click here to see the deployed app](https://rentingstuffonline.netlify.app/)
+[Click here to see the deployed app](https://rentingstuffonline.up.railway.app/)
 Project was made by Maximimiliano Wullbrand-Naddeo, Halil Aydin and Thomas Demoncy.
 
 ## Project Description
