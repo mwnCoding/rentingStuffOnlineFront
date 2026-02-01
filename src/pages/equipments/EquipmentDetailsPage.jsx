@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../api/client.js";
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -27,7 +27,7 @@ function EquipmentDetails() {
   const [comments, setComments] = useState({});
 
   const getEquipment = () => {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/equipments/${equipmentId}`)
       .then((response) => {
         setEquipment(response.data);
@@ -40,9 +40,9 @@ function EquipmentDetails() {
 
   const getOwnerComments = () => {
     if (owner && JSON.stringify(owner) !== "{}") {
-      axios
+      api
         .get(
-          `${import.meta.env.VITE_API_URL}/api/comments?ownedBy=${owner._id}`
+          `${import.meta.env.VITE_API_URL}/api/comments?ownedBy=${owner._id}`,
         )
         .then((response) => {
           setComments(response.data);
@@ -150,7 +150,8 @@ function EquipmentDetails() {
           </Text>
         </Flex>
         <Text>
-          Has been a member since {equipment.ownedBy.createdAt.substring(0, 4)}{" "}
+          Has been a member since{" "}
+          {equipment.ownedBy.createdAt.substring(0, 4)}{" "}
         </Text>
         <Text>Has {equipment.ownedBy.equipment.length} other equipments</Text>
         <Text>Rated: {equipment.ownedBy.comments.length} </Text>

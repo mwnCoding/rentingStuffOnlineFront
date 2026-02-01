@@ -20,7 +20,7 @@ import { useForm } from "@mantine/form";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useContext, useEffect, useState } from "react";
 
-import axios from "axios";
+import api from "../../../api/client";
 import { useNavigate } from "react-router-dom";
 import { IconX } from "@tabler/icons-react";
 
@@ -76,7 +76,7 @@ function CreateEquipment() {
     const formData = new FormData();
     formData.append("imageUrl", file);
 
-    axios
+    api
       .put(`${import.meta.env.VITE_API_URL}/api/equipments/upload`, formData)
       .then((response) => {
         console.log(response);
@@ -108,7 +108,7 @@ function CreateEquipment() {
         available,
       };
       console.log(payload);
-      axios
+      api
         .post(
           `${import.meta.env.VITE_API_URL}/api/equipments`,
           JSON.stringify(payload),
@@ -117,7 +117,7 @@ function CreateEquipment() {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": true,
             },
-          }
+          },
         )
         .then((response) => {
           navigate("/my-listings");

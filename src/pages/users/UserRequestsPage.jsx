@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../api/client";
 import { Title, Grid, Text, Loader, Flex } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -15,7 +15,7 @@ function UserRequests() {
   const [isLoadingReceived, setIsLoadingReceived] = useState(true);
 
   const fetchAllSentRequests = () => {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/requests?requesterId=${userId}`)
       .then((response) => {
         setSentRequests(response.data);
@@ -27,7 +27,7 @@ function UserRequests() {
   };
 
   const fetchAllReceivedRequests = () => {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/requests?ownerId=${userId}`)
       .then((response) => {
         setReceivedRequests(response.data);
@@ -70,7 +70,10 @@ function UserRequests() {
             </Grid.Col>
           ) : (
             <Grid.Col>
-              <SentRequestsGrid allSentRequests={sentRequests} fetchRequests={fetchAllRequests}/>
+              <SentRequestsGrid
+                allSentRequests={sentRequests}
+                fetchRequests={fetchAllRequests}
+              />
             </Grid.Col>
           )}
         </Grid>
@@ -93,7 +96,9 @@ function UserRequests() {
         <Grid gutter="lg" spacing="lg" mt={20} mb={20}>
           {!receivedRequests || receivedRequests.length === 0 ? (
             <Grid.Col mt="1em">
-              <Text>You didn&apos;t received any request to rent equipment.</Text>
+              <Text>
+                You didn&apos;t received any request to rent equipment.
+              </Text>
             </Grid.Col>
           ) : (
             <Grid.Col>

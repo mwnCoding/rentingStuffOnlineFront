@@ -2,7 +2,7 @@ import { Grid, Flex, Button, Loader } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EquipmentCard from "./Card";
-import axios from "axios";
+import api from "../../api/client";
 
 function CardGrid({ isUpdate, allEquipments }) {
   const [equipments, setEquipments] = useState();
@@ -12,7 +12,7 @@ function CardGrid({ isUpdate, allEquipments }) {
   }, [allEquipments]);
 
   const handleDelete = (equipment) => {
-    axios
+    api
       .delete(`${import.meta.env.VITE_API_URL}/api/equipments/${equipment._id}`)
       .then((response) => {
         const newEquipments = equipments.filter(function (el) {

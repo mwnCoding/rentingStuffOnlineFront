@@ -1,6 +1,6 @@
-import axios from "axios";
+import api from "../../../api/client";
 import { useEffect, useState } from "react";
-import { Rating, TextInput, Text, Button , Title, rem} from "@mantine/core";
+import { Rating, TextInput, Text, Button, Title, rem } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
 
 function UpdateComment() {
@@ -12,13 +12,13 @@ function UpdateComment() {
   const navigate = useNavigate();
 
   const fetchCommentToUpdate = () => {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/comments/${commentId}`)
       .then((response) => {
-        setContent(response.data.content)
-        setCreatedBy(response.data.createdBy)
-        setOwnedBy(response.data.ownedBy)
-        setRating(response.data.rating)
+        setContent(response.data.content);
+        setCreatedBy(response.data.createdBy);
+        setOwnedBy(response.data.ownedBy);
+        setRating(response.data.rating);
       })
       .catch((error) => {
         console.log(error);
@@ -29,18 +29,21 @@ function UpdateComment() {
     fetchCommentToUpdate();
   }, [commentId]);
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const payload = { content, rating, ownedBy, createdBy };
-    console.log(payload)
-    axios
-      .put(`${import.meta.env.VITE_API_URL}/api/comments/${commentId}`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": true,
+    console.log(payload);
+    api
+      .put(
+        `${import.meta.env.VITE_API_URL}/api/comments/${commentId}`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": true,
+          },
         },
-      })
+      )
       .then((response) => {
         console.log(response);
         navigate(-1);

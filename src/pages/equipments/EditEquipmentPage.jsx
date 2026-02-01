@@ -19,7 +19,7 @@ import {
 
 import { IconX } from "@tabler/icons-react";
 
-import axios from "axios";
+import api from "../../../api/client";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
@@ -70,7 +70,7 @@ function EditEquipment() {
     const formData = new FormData();
     formData.append("imageUrl", file);
 
-    axios
+    api
       .put(`${import.meta.env.VITE_API_URL}/api/equipments/upload`, formData)
       .then((response) => {
         console.log(response);
@@ -95,7 +95,7 @@ function EditEquipment() {
   }, []);
 
   function getEquipment() {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/equipments/${equipmentId}`)
       .then((response) => {
         setImageUrl(response.data.imageUrl);
@@ -130,7 +130,7 @@ function EditEquipment() {
         available,
       };
       console.log(payload);
-      axios
+      api
         .put(
           `${import.meta.env.VITE_API_URL}/api/equipments/${equipmentId}`,
           JSON.stringify(payload),
@@ -139,7 +139,7 @@ function EditEquipment() {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": true,
             },
-          }
+          },
         )
         .then((response) => {
           console.log(response);
@@ -185,26 +185,26 @@ function EditEquipment() {
                   mt={20}
                 />
                 <Flex justify="center" align="center">
-                <Button
-                  mt={20}
-                  mr={2}
-                  variant="filled"
-                  onClick={() => {
-                    uploadImage();
-                  }}
-                >
-                  Upload
-                </Button>
-                <Button
-                  mt={20}
-                  mr={2}
-                  variant="filled"
-                  onClick={() => {
-                    removeImage();
-                  }}
-                >
-                  Remove
-                </Button>
+                  <Button
+                    mt={20}
+                    mr={2}
+                    variant="filled"
+                    onClick={() => {
+                      uploadImage();
+                    }}
+                  >
+                    Upload
+                  </Button>
+                  <Button
+                    mt={20}
+                    mr={2}
+                    variant="filled"
+                    onClick={() => {
+                      removeImage();
+                    }}
+                  >
+                    Remove
+                  </Button>
                 </Flex>
               </Card.Section>
             </Card>

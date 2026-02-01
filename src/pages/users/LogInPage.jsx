@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Container, Paper, TextInput, Button, Title } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../api/client.js";
 import { AuthContext } from "../../contexts/AuthContext.jsx";
 
 function LoginPage() {
@@ -24,7 +24,7 @@ function LoginPage() {
 
     const { email, password } = formData;
 
-    axios
+    api
       .post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
         JSON.stringify(formData),
@@ -33,7 +33,7 @@ function LoginPage() {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": true,
           },
-        }
+        },
       )
       .then((response) => {
         storeToken(response.data.token);

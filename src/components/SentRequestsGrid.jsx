@@ -4,7 +4,7 @@ import { Grid, Flex, Text, Badge, Image, Button, Space } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { DateInput } from "@mantine/dates";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/client";
 
 function SentRequestsGrid({ allSentRequests, fetchRequests }) {
   const [requests, setRequests] = useState(allSentRequests);
@@ -14,14 +14,14 @@ function SentRequestsGrid({ allSentRequests, fetchRequests }) {
   }, [allSentRequests]);
 
   const handleDeleteRequest = (requestId) => {
-    axios
+    api
       .delete(`${import.meta.env.VITE_API_URL}/api/requests/${requestId}`)
       .then(() => {
         const newRequests = requests.filter(function (request) {
           return request._id != requestId;
         });
         setRequests(newRequests);
-        fetchRequests()
+        fetchRequests();
       })
       .catch((err) => {
         console.log(err);
@@ -52,7 +52,10 @@ function SentRequestsGrid({ allSentRequests, fetchRequests }) {
                     {request.ownerId.firstName} {request.ownerId.lastName}{" "}
                   </Text>
                   <Space h="md" />
-                  <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    align={{ base: "start", sm: "center" }}
+                  >
                     <Text mr="10">From:</Text>
                     <DateInput
                       variant="unstyled"
@@ -69,7 +72,6 @@ function SentRequestsGrid({ allSentRequests, fetchRequests }) {
                   </Flex>
                 </Flex>
               </Grid.Col>
-
 
               <Grid.Col span={12}>
                 <Grid>
@@ -112,15 +114,17 @@ function SentRequestsGrid({ allSentRequests, fetchRequests }) {
                       >
                         Edit
                       </Button>
-                      <Button variant="filled" color="#CA1747" onClick={() => handleDeleteRequest(request._id)}>
+                      <Button
+                        variant="filled"
+                        color="#CA1747"
+                        onClick={() => handleDeleteRequest(request._id)}
+                      >
                         Delete
                       </Button>
                     </Flex>
                   </Grid.Col>
                 </Grid>
               </Grid.Col>
-
-
             </Grid>
           </Grid.Col>
         );

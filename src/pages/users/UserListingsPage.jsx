@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../api/client.js";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext.jsx";
@@ -12,7 +12,7 @@ function UserListings() {
   const [isLoading, setIsLoading] = useState(true);
 
   const getEquipments = () => {
-    axios
+    api
       .get(`${import.meta.env.VITE_API_URL}/api/equipments?ownedBy=${userId}`)
       .then((response) => {
         setEquipments(response.data);
@@ -25,7 +25,6 @@ function UserListings() {
   useEffect(() => {
     getEquipments();
   }, []);
-
 
   return (
     <>

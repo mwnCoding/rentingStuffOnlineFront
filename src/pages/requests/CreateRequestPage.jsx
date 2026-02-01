@@ -4,7 +4,7 @@ import { Button, Textarea, Title, Text } from "@mantine/core";
 import { useState } from "react";
 import { DatePickerInput } from "@mantine/dates";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../api/client";
 import { useForm } from "@mantine/form";
 
 function CreateRequest() {
@@ -21,45 +21,47 @@ function CreateRequest() {
       dates: [],
     },
     validate: {
-      requestMessage: (value) => 
-        value.length < 20 ? "Your message has to be at least 20 characters" : null,
+      requestMessage: (value) =>
+        value.length < 20
+          ? "Your message has to be at least 20 characters"
+          : null,
       dates: (value) =>
-        !value[0] && !value[1] ? "YOU MUST HAVE 2 DATES ARE YOU DAFT?" : null, 
-    }
-  })
+        !value[0] && !value[1] ? "YOU MUST HAVE 2 DATES ARE YOU DAFT?" : null,
+    },
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (newForm.isValid()){
-    const requestMessage = newForm.getInputProps("requestMessage").value
-    const dates = newForm.getInputProps("dates").value
-    const startDate = dates[0];
-    const endDate = dates[1];
-    const payload = {
-      ownerId,
-      requesterId,
-      requestMessage,
-      startDate,
-      endDate,
-      equipmentId
-    };
+    if (newForm.isValid()) {
+      const requestMessage = newForm.getInputProps("requestMessage").value;
+      const dates = newForm.getInputProps("dates").value;
+      const startDate = dates[0];
+      const endDate = dates[1];
+      const payload = {
+        ownerId,
+        requesterId,
+        requestMessage,
+        startDate,
+        endDate,
+        equipmentId,
+      };
 
-    axios
-      .post(`${import.meta.env.VITE_API_URL}/api/requests`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": true,
-        },
-      })
-      .then(() => {
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      api
+        .post(`${import.meta.env.VITE_API_URL}/api/requests`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": true,
+          },
+        })
+        .then(() => {
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
-      newForm.validate()
+      newForm.validate();
     }
   };
 
@@ -86,8 +88,9 @@ function CreateRequest() {
           mt="2em"
           {...newForm.getInputProps("dates")}
         />
-        <Button mt="2em"
-        mb="2em" type="submit">Send your request</Button>
+        <Button mt="2em" mb="2em" type="submit">
+          Send your request
+        </Button>
       </form>
     </>
   );

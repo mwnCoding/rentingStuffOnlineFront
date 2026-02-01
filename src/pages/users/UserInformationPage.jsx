@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
+import api from "../../../api/client";
 import {
   Flex,
   Container,
   Paper,
   Image,
   Text,
-  Grid,
   Button,
   Loader,
   Center,
@@ -17,18 +16,17 @@ import { AuthContext } from "../../contexts/AuthContext";
 
 function UserInformationPage() {
   const { user } = useContext(AuthContext);
-  const [userId, setuserId] = useState(user.userId);
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/user/${userId}`)
+    api
+      .get(`${import.meta.env.VITE_API_URL}/api/user/${user._id}`)
       .then((response) => {
         setUserData(response.data);
         setIsLoading(false);
       });
-  }, [user.userId]);
+  }, [user]);
 
   return (
     <>

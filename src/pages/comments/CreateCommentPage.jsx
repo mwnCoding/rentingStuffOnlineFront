@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext.jsx";
-import { Rating, TextInput, Text, Button , Title} from "@mantine/core";
+import { Rating, TextInput, Text, Button, Title } from "@mantine/core";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../api/client.js";
 
 function CreateComment() {
   const { user } = useContext(AuthContext);
@@ -20,7 +20,7 @@ function CreateComment() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const payload = { content, rating, ownedBy, createdBy };
-    axios
+    api
       .post(`${import.meta.env.VITE_API_URL}/api/comments`, payload, {
         headers: {
           "Content-Type": "application/json",

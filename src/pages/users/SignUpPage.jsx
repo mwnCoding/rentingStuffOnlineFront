@@ -6,31 +6,25 @@ import {
   Button,
   PasswordInput,
   Flex,
-  Image,
-  FileInput,
   Title,
   Notification,
   rem,
-  Loader,
 } from "@mantine/core";
 import { hasLength, isEmail, useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../api/client";
 
 import { IconX } from "@tabler/icons-react";
-import uploadImage from "../../services/cloudinaryUpload";
+import ProfilePictureInput from "../../components/ProfilePictureInput";
 
 function SignupPage() {
   const defaultPorfileUrl =
     "https://res.cloudinary.com/dq06ojue1/image/upload/v1698767929/d9r3dmbpbov77j75rqz0.png";
 
-  const [file, setFile] = useState(null);
-  const [fileUploaded, setFileUploaded] = useState(false);
-  const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
-
   const [imageLoading, setImageLoading] = useState(false);
-
   const [emailTaken, setEmailTaken] = useState(false);
+
+  const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
 
   const newForm = useForm({
     initialValues: {
@@ -69,7 +63,7 @@ function SignupPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(newForm.isValid());
-    if (newForm.isValid() && ((fileUploaded && file) || !file)) {
+    if (newForm.isValid() && !imageLoading) {
       const formData = {
         firstName: newForm.getInputProps("firstName").value,
         lastName: newForm.getInputProps("lastName").value,
@@ -77,12 +71,14 @@ function SignupPage() {
         password: newForm.getInputProps("password").value,
         imageUrl: newForm.getInputProps("imgUrl").value,
       };
-      axios
+      api
         .post(`${import.meta.env.VITE_API_URL}/auth/signup`, formData)
         .then((response) => {
+          console.debug(response);
           navigate("/login");
         })
         .catch((err) => {
+          console.error(err);
           setEmailTaken(true);
         });
     } else {
@@ -91,125 +87,84 @@ function SignupPage() {
     }
   };
 
-  async function handleUploadImage(selectedFile) {
-    if (!selectedFile) return;
-    console.log(selectedFile);
-    setImageLoading(true);
-    try {
-      const fileURL = await uploadImage(selectedFile);
-      newForm.setFieldValue("imgUrl", fileURL);
-      setFileUploaded(true);
-      setImageLoading(false);
-    } catch (error) {
-      console.error(error);
-      setImageLoading(false);
-    }
-  }
-
-  const onChangeFile = (selectedFile) => {
-    console.log(selectedFile);
-    setFile(selectedFile);
-    handleUploadImage(selectedFile);
+  const onChangeFileUrl = (fileUrl) => {
+    newForm.setFieldValue("imgUrl", fileUrl);
   };
-
-  function removeImage() {
-    newForm.setFieldValue("imgUrl", defaultPorfileUrl);
-    setFile(null);
-    setFileUploaded(false);
-  }
 
   return (
     <Flex direction="column" justify="center">
       <Title order={1} fw={900} c="#288BE2">
         Sign Up
       </Title>
-      <Flex wrap="wrap" w="100%" justify="center">
-        {imageLoading ? (
-          <Loader color="blue" size="10em" />
-        ) : (
-          <Image
-            src={newForm.getInputProps("imgUrl").value}
-            h="10em"
-            w="10em"
-            radius="100"
-          />
-        )}
-
-        <Flex direction="column" justify="space-evenly">
-          <FileInput
-            label="Profile picture"
-            placeholder="click to upload"
-            value={file}
-            onChange={onChangeFile}
-          />
-          {fileUploaded && (
-            <Flex justify="space-evenly">
-              <Button onClick={removeImage}>Remove</Button>
-            </Flex>
-          )}
-        </Flex>
-
-        <Container w="100%">
-          <Paper bg="#F2F2F2" padding="xl">
-            <form onSubmit={handleSubmit}>
-              <TextInput
-                label="First Name"
-                placeholder="Enter first name"
-                name="firstName"
-                mt="1em"
-                {...newForm.getInputProps("firstName")}
-              />
-              <TextInput
-                label="Last Name"
-                placeholder="Enter last name"
-                name="lastName"
-                mt="1em"
-                {...newForm.getInputProps("lastName")}
-              />
-              <TextInput
-                label="Email"
-                placeholder="Enter email"
-                name="email"
-                mt="1em"
-                {...newForm.getInputProps("email")}
-              />
-              <PasswordInput
-                label="Password"
-                placeholder="Enter password"
-                name="password"
-                mt="1em"
-                {...newForm.getInputProps("password")}
-              />
-              <PasswordInput
-                label="Confirm Password"
-                placeholder="Repeat password"
-                name="password"
-                mt="1em"
-                {...newForm.getInputProps("confirmPassword")}
-              />
-              {emailTaken && (
-                <Notification
-                  icon={xIcon}
-                  color={"red"}
-                  title="Uhlala"
-                  mt="1em"
-                  withCloseButton={false}
-                >
-                  Seems like this email is already in use
-                </Notification>
-              )}
-              <Button
-                mt="1em"
-                type="submit"
-                variant="filled"
-                disabled={imageLoading}
-              >
-                Sign Up
-              </Button>
-            </form>
-          </Paper>
-        </Container>
+      <Flex wrap="wrap" direction="column" gap="xs" w="100%" justify="center">
+        <ProfilePictureInput
+          value={newForm.getInputProps("imgUrl").value}
+          loading={imageLoading}
+          onChange={onChangeFileUrl}
+          onLoadingChange={setImageLoading}
+        />
       </Flex>
+
+      <Container w="100%">
+        <Paper bg="#F2F2F2" padding="xl">
+          <form onSubmit={handleSubmit}>
+            <TextInput
+              label="First Name"
+              placeholder="Enter first name"
+              name="firstName"
+              mt="1em"
+              {...newForm.getInputProps("firstName")}
+            />
+            <TextInput
+              label="Last Name"
+              placeholder="Enter last name"
+              name="lastName"
+              mt="1em"
+              {...newForm.getInputProps("lastName")}
+            />
+            <TextInput
+              label="Email"
+              placeholder="Enter email"
+              name="email"
+              mt="1em"
+              {...newForm.getInputProps("email")}
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Enter password"
+              name="password"
+              mt="1em"
+              {...newForm.getInputProps("password")}
+            />
+            <PasswordInput
+              label="Confirm Password"
+              placeholder="Repeat password"
+              name="password"
+              mt="1em"
+              {...newForm.getInputProps("confirmPassword")}
+            />
+            {emailTaken && (
+              <Notification
+                icon={xIcon}
+                color={"red"}
+                title="Uhlala"
+                mt="1em"
+                withCloseButton={false}
+              >
+                Seems like this email is already in use
+              </Notification>
+            )}
+            <Button
+              mt="1em"
+              type="submit"
+              variant="filled"
+              disabled={imageLoading}
+            >
+              Sign Up
+            </Button>
+          </form>
+        </Paper>
+      </Container>
     </Flex>
   );
 }

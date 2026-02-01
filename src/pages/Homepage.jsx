@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CardGrid from "../components/CardGrid";
-import axios from "axios";
+import api from "../../api/client";
 import {
   Title,
   Flex,
@@ -35,7 +35,7 @@ function Homepage() {
       url += `&${queryParams.join("&")}`;
     }
 
-    axios
+    api
       .get(url)
       .then((response) => {
         setEquipments(response.data);
@@ -98,7 +98,7 @@ function Homepage() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredEquipments.slice(
     indexOfFirstItem,
-    indexOfLastItem
+    indexOfLastItem,
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -161,21 +161,21 @@ function Homepage() {
           <Menu.Dropdown>
             <MenuItem
               onClick={() => {
-                setItemsPerPage(12), setCurrentPage(1);
+                (setItemsPerPage(12), setCurrentPage(1));
               }}
             >
               12
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setItemsPerPage(24), setCurrentPage(1);
+                (setItemsPerPage(24), setCurrentPage(1));
               }}
             >
               24
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setItemsPerPage(48), setCurrentPage(1);
+                (setItemsPerPage(48), setCurrentPage(1));
               }}
             >
               48

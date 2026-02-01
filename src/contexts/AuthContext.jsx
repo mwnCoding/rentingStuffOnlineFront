@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api/client";
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
@@ -22,13 +22,12 @@ function AuthProviderWrapper(props) {
     // If the token exists in the localStorage
     if (storedToken) {
       // We must send the JWT token in the request's "Authorization" Headers
-      axios
-        .get(`${API_URL}/auth/verify`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        })
+      api
+        .get(`${API_URL}/auth/verify`)
         .then((response) => {
           // If the server verifies that JWT token is valid
           const user = response.data;
+          console.log(user);
           // Update state variables
           setIsLoggedIn(true);
           setIsLoading(false);
@@ -63,6 +62,10 @@ function AuthProviderWrapper(props) {
     authenticateUser();
   };
 
+  const updateUser = (updatedUser) => {
+    authenticateUser();
+  };
+
   useEffect(() => {
     // Run the function after the initial render,
     // after the components in the App render for the first time.
@@ -78,6 +81,7 @@ function AuthProviderWrapper(props) {
         storeToken,
         authenticateUser,
         logOutUser,
+        updateUser,
         authError,
       }}
     >

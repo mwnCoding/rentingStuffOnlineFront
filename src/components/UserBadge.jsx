@@ -1,13 +1,11 @@
 import { Avatar, UnstyledButton, Text, Menu, rem, Group } from "@mantine/core";
-import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { IconChevronDown, IconLogout, IconSettings } from "@tabler/icons-react";
 import { AuthContext } from "../contexts/AuthContext";
 
 function UserBadge({ userProps }) {
-  const [user, setUser] = useState(userProps);
-  const [userInfo, setUserInfo] = useState();
+  const { user } = useContext(AuthContext);
   const [opened, setOpened] = useState(false);
 
   const { logOutUser } = useContext(AuthContext);
@@ -24,21 +22,7 @@ function UserBadge({ userProps }) {
     opened ? close() : open();
   };
 
-  const getUserInfo = () => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/user/${user.userId}`)
-      .then((response) => {
-        setUserInfo(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
-  return !userInfo ? (
+  return !user ? (
     "test"
   ) : (
     <>
@@ -46,9 +30,9 @@ function UserBadge({ userProps }) {
         <Menu.Target>
           <UnstyledButton>
             <Group>
-              <Avatar src={userInfo.imageUrl} alt="it's me" />
+              <Avatar src={user.imageUrl} alt="it's me" />
               <Text>
-                {userInfo.firstName} {userInfo.lastName}
+                {user.firstName} {user.lastName}
               </Text>
               <IconChevronDown
                 aria-label="Toggle navigation"

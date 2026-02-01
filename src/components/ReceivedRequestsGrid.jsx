@@ -1,22 +1,10 @@
 import "dayjs/locale/de";
 import "@mantine/dates/styles.css";
-import {
-  Grid,
-  Flex,
-  Text,
-  Badge,
-  Image,
-  Button,
-  Space,
-  Radio,
-  Group,
-  Textarea,
-  Loader,
-} from "@mantine/core";
+import { Grid, Flex, Text, Badge, Image, Button, Space } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { DateInput } from "@mantine/dates";
 import RequestOwnerForm from "./RequestOwnerForm";
-import axios from "axios";
+import api from "../../api/client";
 
 function ReceivedRequestsGrid({ allReceivedRequests, fetchRequests }) {
   const [requests, setRequests] = useState();
@@ -29,7 +17,7 @@ function ReceivedRequestsGrid({ allReceivedRequests, fetchRequests }) {
     const equipmmentId = id;
     const available = true;
     const payload = { available };
-    axios
+    api
       .put(
         `${import.meta.env.VITE_API_URL}/api/equipments/${equipmmentId}`,
         payload,
@@ -38,7 +26,7 @@ function ReceivedRequestsGrid({ allReceivedRequests, fetchRequests }) {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": true,
           },
-        }
+        },
       )
       .then((response) => {
         console.log(response);
@@ -54,37 +42,49 @@ function ReceivedRequestsGrid({ allReceivedRequests, fetchRequests }) {
         requests.map((request) => {
           return (
             <Grid.Col key={request._id} span={12}>
-
-              <Grid bg="#FFFFFF" mt="1em" shadow="sm" style={{ borderRadius: "10px", border: '1px solid #E8E9EB', boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px, rgba(0, 0, 0, 0.05) 0px 10px 15px -5px, rgba(0, 0, 0, 0.04) 0px 7px 7px -5px'}} p="2em">
+              <Grid
+                bg="#FFFFFF"
+                mt="1em"
+                shadow="sm"
+                style={{
+                  borderRadius: "10px",
+                  border: "1px solid #E8E9EB",
+                  boxShadow:
+                    "rgba(0, 0, 0, 0.05) 0px 1px 3px 0px, rgba(0, 0, 0, 0.05) 0px 10px 15px -5px, rgba(0, 0, 0, 0.04) 0px 7px 7px -5px",
+                }}
+                p="2em"
+              >
                 <Grid.Col span={12}>
-                <Flex direction="column" mb="2em">
-                  <Text>
-                    Request for: {request.equipmentId.name}, from{" "}
-                    {request.requesterId.firstName}{" "}
-                    {request.requesterId.lastName}
-                  </Text>
-                  <Space h="md" />
-                  <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'start', sm: 'center' }}>
-                    <Text mr="10">From:</Text>
-                    <DateInput
-                      variant="unstyled"
-                      value={new Date(request.startDate)}
-                      disabled
-                      mr="10"
-                    />
-                    <Text mr="10">to</Text>
-                    <DateInput
-                      variant="unstyled"
-                      value={new Date(request.endDate)}
-                      disabled
-                    />
+                  <Flex direction="column" mb="2em">
+                    <Text>
+                      Request for: {request.equipmentId.name}, from{" "}
+                      {request.requesterId.firstName}{" "}
+                      {request.requesterId.lastName}
+                    </Text>
+                    <Space h="md" />
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      align={{ base: "start", sm: "center" }}
+                    >
+                      <Text mr="10">From:</Text>
+                      <DateInput
+                        variant="unstyled"
+                        value={new Date(request.startDate)}
+                        disabled
+                        mr="10"
+                      />
+                      <Text mr="10">to</Text>
+                      <DateInput
+                        variant="unstyled"
+                        value={new Date(request.endDate)}
+                        disabled
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Grid.Col>
 
-
                 <Grid.Col span={12}>
-                <Grid>
+                  <Grid>
                     <Grid.Col span={2}>
                       <Image fit="contain" src={request.equipmentId.imageUrl} />
                     </Grid.Col>
@@ -133,7 +133,6 @@ function ReceivedRequestsGrid({ allReceivedRequests, fetchRequests }) {
                     </Grid.Col>
                   </Grid>
                 </Grid.Col>
-
               </Grid>
             </Grid.Col>
           );

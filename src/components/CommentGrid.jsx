@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { Grid, Flex, Button, Loader } from "@mantine/core";
 import Comment from "./Comment";
 import { AuthContext } from "../contexts/AuthContext.jsx";
-import axios from "axios";
+import api from "../../api/client.js";
 import { Link } from "react-router-dom";
 
 function CommentGrid({ allcomments }) {
@@ -12,16 +12,18 @@ function CommentGrid({ allcomments }) {
   const { user } = useContext(AuthContext);
 
   const handleDelete = (comment) => {
-    axios
+    api
       .delete(`${import.meta.env.VITE_API_URL}/api/comments/${comment._id}`)
       .then((response) => {
         const newComments = comments.filter(function (el) {
           return el != comment;
         });
         setComments(newComments);
-      }).catch((err) => {console.log(err)})
-    }
-  
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     setComments(allcomments);
