@@ -2,29 +2,24 @@ import api from "../../../api/client.js";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext.jsx";
-import { Flex, Title, Group, Text, Button, Loader } from "@mantine/core";
+import { Flex, Title, Group, Text, Button } from "@mantine/core";
 import CardGrid from "../../components/CardGrid.jsx";
+import { getEquipmentsByID } from "../../services/equipment.service.js";
 
 function UserListings() {
-  const [equipments, setEquipments] = useState();
+  const [equipments, setEquipments] = useState([]);
   const { user } = useContext(AuthContext);
-  const [userId, setuserId] = useState(user.userId);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getEquipments = () => {
-    api
-      .get(`${import.meta.env.VITE_API_URL}/api/equipments?ownedBy=${userId}`)
-      .then((response) => {
-        setEquipments(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   useEffect(() => {
-    getEquipments();
-  }, []);
+    getEquipmentsByID(user._id)
+      .then((equipments) => {
+        console.log(equipments);
+        setEquipments(equipments);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [user]);
 
   return (
     <>

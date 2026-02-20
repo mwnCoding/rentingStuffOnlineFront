@@ -16,19 +16,22 @@ import "../styles/homepage.css";
 
 function Homepage() {
   const [equipments, setEquipments] = useState("");
+  const [categories, setCategories] = useState([]);
   const [filteredEquipments, setFilteredEquipments] = useState("");
   const [selectedTag, setSelectedTag] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
+  const baseURL = import.meta.env.VITE_API_URL;
+
   const getEquipments = () => {
-    let url = `${import.meta.env.VITE_API_URL}/api/equipments?available=true`;
+    let url = `${baseURL}/api/equipments?available=true`;
 
     const queryParams = [];
 
     if (selectedTag) {
-      queryParams.push(`categories=${selectedTag}`);
+      queryParams.push(`categories=${selectedTag._id}`);
     }
 
     if (queryParams.length > 0) {
@@ -46,7 +49,21 @@ function Homepage() {
       });
   };
 
+  const getCategories = () => {
+    let url = `${baseURL}/api/categories/`;
+
+    api
+      .get(url)
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
+    getCategories();
     getEquipments();
     setFilteredEquipments(equipments);
   }, []);
@@ -72,16 +89,6 @@ function Homepage() {
     setSelectedTag(tag);
     setCurrentPage(1);
   };
-
-  const allTags = [
-    "Tennis",
-    "Climbing",
-    "Fishing",
-    "Hiking",
-    "Surfing",
-    "Biking",
-    "Skiing",
-  ];
 
   const handleSearch = () => {
     if (equipments) {
@@ -134,14 +141,15 @@ function Homepage() {
           >
             All
           </Button>
-          {allTags.map((tag) => (
+          {categories.map((category) => (
             <Button
               className="tag"
               variant="filled"
-              key={tag}
-              onClick={(event) => handleTagFilter(tag, event)}
+              key={category.name}
+              color={category.color}
+              onClick={(event) => handleTagFilter(category, event)}
             >
-              {tag}
+              {category.name}
             </Button>
           ))}
         </Flex>

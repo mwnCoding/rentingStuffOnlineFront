@@ -31,7 +31,7 @@ function CardGrid({ isUpdate, allEquipments }) {
           equipments.map((equipment) => {
             return (
               <Grid.Col
-                key={equipment.id}
+                key={equipment._id}
                 span={{ base: 12, xs: 4, md: 4, lg: 4 }}
               >
                 <EquipmentCard props={equipment} />

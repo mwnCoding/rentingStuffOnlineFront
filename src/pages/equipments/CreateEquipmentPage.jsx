@@ -23,6 +23,7 @@ import { useContext, useEffect, useState } from "react";
 import api from "../../../api/client";
 import { useNavigate } from "react-router-dom";
 import { IconX } from "@tabler/icons-react";
+import { getCategories } from "../../services/category.service";
 
 function CreateEquipment() {
   const navigate = useNavigate();
@@ -33,8 +34,7 @@ function CreateEquipment() {
     "https://res.cloudinary.com/dq06ojue1/image/upload/v1698659751/trsfpj0z9irvccspskqu.jpg";
 
   const [imageUrl, setImageUrl] = useState(defaultImageUrl);
-
-  const [ownedBy, setOwnedBy] = useState(user.userId);
+  const [categories, setCategories] = useState([]);
 
   const newForm = useForm({
     initialValues: {
@@ -61,6 +61,17 @@ function CreateEquipment() {
   const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
   const [file, setFile] = useState(null);
   const [fileUploaded, setFileUploaded] = useState(true);
+
+  useEffect(() => {
+    getCategories()
+      .then((response) => {
+        console.log(response);
+        setCategories(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   useEffect(() => {
     setFileUploaded(false);
@@ -103,7 +114,7 @@ function CreateEquipment() {
         description,
         condition,
         categories,
-        ownedBy,
+        ownedBy: user._id,
         imageUrl,
         available,
       };
@@ -200,15 +211,9 @@ function CreateEquipment() {
                   id="categoriesInput"
                   withAsterisk
                   w={350}
-                  data={[
-                    "Tennis",
-                    "Climbing",
-                    "Fishing",
-                    "Hiking",
-                    "Surfing",
-                    "Biking",
-                    "Skiing",
-                  ]}
+                  data={categories.map((element) => {
+                    return { value: element._id, label: element.name };
+                  })}
                   {...newForm.getInputProps("categories")}
                   hidePickedOptions
                   searchable
